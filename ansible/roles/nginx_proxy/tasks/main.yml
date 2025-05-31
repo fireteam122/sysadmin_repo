@@ -1,0 +1,16 @@
+- name: Установка Nginx на прокси-сервере
+  apt:
+    name: nginx
+    state: present
+
+- name: Настройка Nginx для проксирования портов
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/default
+
+- name: Перезапуск Nginx для применения настроек
+  service:
+    name: nginx
+    state: restarted
+
+#  шаблон `roles/nginx_proxy/templates/nginx.conf.j2`

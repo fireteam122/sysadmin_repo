@@ -1,0 +1,15 @@
+- name: Установка стандартных пакетов
+  apt:
+    name:
+      - net-tools
+      - dnsutils
+      - wget
+      - curl
+      - mc
+      - rsync
+    state: present
+    update_cache: yes
+
+- name: Изменение имени машины (пример)
+  hostname:
+    name: "{{ inventory_hostname }}"

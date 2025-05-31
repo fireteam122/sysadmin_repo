@@ -1,0 +1,25 @@
+- name: Настройка прокси Nginx
+  hosts: nginx_proxy
+  become: yes
+  vars:
+    backend_hosts: "{{ groups['nginx_backend'] }}"
+  tasks:
+    - name: Получить IP всех backend-хостов
+      set_fact:
+        backend_ips: "{{ query('inventory_hostnames', item) | map('extract', hostvars, 'ansible_host') | list }}"
+      loop: "{{ backend_hosts }}"
+
+    - name: Установить Nginx на прокси-сервере
+      apt:
+        name: nginx
+        state: present
+
+    - name: Настроить Nginx для проксирования порта 3000 на backend IPs
+      template:
+        src:  nginx.conf.j2
+        dest: /etc/nginx/sites-enabled/default
+
+    - name: Перезапустить Nginx для применения настроек
+      service:
+        name: nginx
+        state: restarted
